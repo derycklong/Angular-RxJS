@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './home/welcome.component';
 import { PageNotFoundComponent } from './page-not-found.component';
+import { ProductCategoryService } from './product-categories/product-category.service'
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { PageNotFoundComponent } from './page-not-found.component';
     WelcomeComponent,
     PageNotFoundComponent
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: []
 })
 export class AppModule { }

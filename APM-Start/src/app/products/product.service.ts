@@ -8,6 +8,7 @@ import { Product } from './product';
 import { Supplier } from '../suppliers/supplier';
 import { SupplierService } from '../suppliers/supplier.service';
 import { ProductCategoryData } from '../product-categories/product-category-data';
+import { ProductCategoryService } from '../product-categories/product-category.service';
 
 
 @Injectable({
@@ -34,7 +35,7 @@ export class ProductService {
 
   constructor(private http: HttpClient,
               private supplierService: SupplierService,
-             ) { }
+              private productCatergoryService : ProductCategoryService) { }
 
   private fakeProduct(): Product {
     return {

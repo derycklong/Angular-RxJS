@@ -19,19 +19,31 @@ export class ProductService {
   private suppliersUrl = this.supplierService.suppliersUrl;
 
   products$ = this.http.get<Product[]>(this.productsUrl)
-                  .pipe(
-                    map(products => 
-                      products.map(product => ({
-                        ...product,
-                        price: product.price * 1.5,
-                        searchKey : [product.productName]
-                      })as Product)),
-                    tap(data => console.log('Products: ', JSON.stringify(data))),
-                    catchError(this.handleError)
-                );
+    .pipe(
+      map(products => 
+        products.map(product => ({
+          ...product,
+          price: product.price * 1.5,
+          searchKey : [product.productName]
+        })as Product)),
+      tap(data => console.log('Products: ', JSON.stringify(data))),
+      catchError(this.handleError)
+  );
+
   productsWithCategories$ = combineLatest([
-    this.products$
-  ])
+    this.products$,
+    this.productCatergoryService.productCategories$
+  ]).pipe(
+    map(([products,catergories]) => 
+    products.map(product => ({
+      ...product,
+      price : product.price * 1.5,
+      category : catergories.find(c=> product.categoryId === c.id).name,
+      searchKey : [product.productName]
+    }) as Product )
+    )
+
+  )
 
   constructor(private http: HttpClient,
               private supplierService: SupplierService,

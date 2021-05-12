@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {  BehaviorSubject, combineLatest, EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import {  BehaviorSubject, combineLatest, EMPTY, merge, Observable, Subject} from 'rxjs';
+import { catchError, map, scan, tap } from 'rxjs/operators';
 import { ProductCategoryService } from '../product-categories/product-category.service';
 
 import { Product } from './product';
@@ -16,32 +16,47 @@ export class ProductListComponent {
   errorMessage = ''
   selectedCatergoyId
 
-  private selectedCategorySubject = new BehaviorSubject<Number>(0);
-  selectedCategoryAction$ = this.selectedCategorySubject.asObservable();
+ 
+
+  private errorMessageSubject = new Subject<string>()
+  errorMessage$ = this.errorMessageSubject.asObservable()
+
+
+
+  private selectedCategorySubject = new BehaviorSubject<Number>(0)
+  selectedCategoryAction$ = this.selectedCategorySubject.asObservable()
 
   categories$ = this.productCategoryService.productCategories$
     .pipe(
       catchError(err => {
-        this.errorMessage = err
+        this.errorMessageSubject.next(err)
         return EMPTY
       })
     )
 
-  productsWithFilter$ = combineLatest([
-        this.productService.productsWithCategories$,
+
+
+  products$ = combineLatest([
+        this.productService.productWithAdd$,
         this.selectedCategoryAction$
       ])
       .pipe(
         map(([products,catergoryId]) => 
         products.filter(product => 
           catergoryId ?  product.categoryId == catergoryId : true )
-        )
-      ).subscribe()
+        ),
+        catchError(err =>{
+          this.errorMessageSubject.next(err)
+          return EMPTY
+        })
+      )
+
+
 
   constructor(private productService: ProductService, private productCategoryService: ProductCategoryService){ }
 
   onAdd(): void {
-    console.log('Not yet implemented');
+    this.productService.addProduct()
   }
 
   onSelected(categoryId: string): void {

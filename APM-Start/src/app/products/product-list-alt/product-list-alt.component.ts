@@ -16,8 +16,7 @@ export class ProductListAltComponent {
   errorMessage = '';
   selectedProductId: number;
 
-  products: Product[] = [];
-  sub: Subscription;
+
 
   private errorMessageSubject = new Subject<string>()
   errorMessage$ = this.errorMessageSubject.asObservable()
